@@ -1,4 +1,4 @@
-FROM python:3.10.11
+FROM python:3.10.11-slim
 
 # there is no user to interact while building the image
 ENV DEBIAN_FRONTEND=noninteractive
