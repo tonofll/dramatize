@@ -1,11 +1,11 @@
 {
-    "name": "dramatize/api",
-    "workspaceFolder": "/app/api", // check "python.defaultInterpreterPath" property
+    "name": "dramatize/client",
+    "workspaceFolder": "/app/client", // check "python.defaultInterpreterPath" property
     "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
     "build": { "dockerfile": "Dockerfile", "context": ".."},
-    "runArgs": ["--name", "devcontainer_dramatize_api", "--platform", "linux/amd64"],
+    "runArgs": ["--name", "devcontainer_dramatize_client", "--platform", "linux/amd64"],
     //"postAttachCommand": "cd /app/ && pre-commit install",
-    "updateContentCommand": "cd /app/api && poetry install",
+    "updateContentCommand": "cd /app/client && poetry install",
     "customizations": {
         "vscode": {
             "extensions": [

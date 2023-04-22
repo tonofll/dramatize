@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  db:
+    container_name: dramatize-db
+    image: dramatize/db
+    build: ../../../db
+    restart: always
+    environment:
+      # TODO: move to .env
+      POSTGRES_PASSWORD: example
+
+  api:
+    container_name: dramatize-api
+    image: dramatize/api
+    build: ../../../api
+    depends_on:
+      - db
+
