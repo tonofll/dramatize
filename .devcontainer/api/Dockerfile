@@ -35,6 +35,10 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Change to the new user.
 USER $USERNAME
 
+# config powerline 10k terminal
+#COPY ./shared/p10k/* ./shared/p10k/
+#RUN ./shared/p10k/setup.sh &&  sudo chsh -s /bin/zsh ${USERNAME}
+
 # Install pre-commit and poetry using pip
 RUN pip3 install --upgrade pip
 RUN pip3 install poetry==1.4.0 pre-commit==3.2.0
