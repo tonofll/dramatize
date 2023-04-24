@@ -16,7 +16,7 @@ class Base(DeclarativeBase):
 # Many-to-many relationship between characters and scenes
 # (e.g. a character can be in multiple scenes and a scene can have multiple characters)
 at_scene_character = Table(
-    "at_scene_character",
+    "scenes_characters",
     Base.metadata,
     Column("scene_id", Integer, ForeignKey("scenes.id", ondelete="CASCADE")),
     Column("character_id", Integer, ForeignKey("characters.id", ondelete="CASCADE")),
@@ -26,7 +26,7 @@ at_scene_character = Table(
 # (e.g. a character can be played by multiple cast members and a cast member can play
 #  multiple characters)
 at_cast_member_character = Table(
-    "at_castmember_character",
+    "characters_cast_members",
     Base.metadata,
     Column("cast_member_id", Integer, ForeignKey("cast_members.id", ondelete="CASCADE")),
     Column("character_id", Integer, ForeignKey("characters.id", ondelete="CASCADE")),
