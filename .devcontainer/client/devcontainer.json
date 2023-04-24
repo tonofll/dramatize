@@ -1,0 +1,77 @@
+{
+    "name": "dramatize/client",
+    "workspaceFolder": "/app/client", // check "python.defaultInterpreterPath" property
+    "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+    "build": { "dockerfile": "Dockerfile", "context": ".."},
+    "runArgs": ["--name", "devcontainer_dramatize_client", "--platform", "linux/amd64"],
+    //"postAttachCommand": "cd /app/ && pre-commit install",
+    "updateContentCommand": "cd /app/client && poetry install",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.black-formatter",
+                "charliermarsh.ruff",
+                "matangover.mypy",
+                "mhutchie.git-graph",
+                "GitHub.copilot",
+                "GitHub.copilot-labs",
+                "bungcip.better-toml",
+                "davidanson.vscode-markdownlint",
+                "bierner.github-markdown-preview",
+                "esbenp.prettier-vscode",
+                "usernamehw.errorlens",
+                "ryanluker.vscode-coverage-gutters",
+                "github.vscode-pull-request-github"
+            ],
+            "settings": {
+                "git.openRepositoryInParentFolders": "always",
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.fontFamily": "'MesloLGS NF', 'MesloLGS Nerd Font Mono'",
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "/home/.zshrc"
+                    }
+                },
+                "python.terminal.activateEnvironment": true,
+                "python.terminal.activateEnvInCurrentTerminal": true,
+                /* 👇 (Hash generated using POETRY v1.4.0)
+                    The following setting may need to be updated if the root folder path is ever changed.
+                    Poetry generates the '9TtSrW0h' part of the folder name by hashing the project's path.
+                    If the project is moved from '/app' to another location, this setting will break and need adjustment.
+                    The option to install '.venv' in the project using Poetry doesn't work because the contents of the 'app'
+                    folder are overwritten during container creation. It's recommended to keep this setting unchanged and
+                    avoid altering the project root directory.
+                */
+                "python.defaultInterpreterPath": "/home/vscode/.cache/pypoetry/virtualenvs/dramatize-api-4gFydmEK-py3.10/bin/python",
+                "python.testing.pytestArgs": ["tests"],
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestEnabled": true,
+                "python.linting.enabled": true,
+                "python.linting.mypyEnabled": true,
+                "python.linting.lintOnSave": true,
+                "[python]": {
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll": true,
+                        "source.organizeImports": true,
+                        "source.removeUnusedImports": true
+                    },
+                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.formatOnSave": true,
+                    "editor.formatOnType": true
+                },
+                "black-formatter.args": ["--line-length", "100"],
+                "ruff.args": ["--line-length", "100"],
+                "mypy.runUsingActiveInterpreter": true,
+                "[json]": {
+                    "editor.formatOnSave": true,
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                }
+            }
+        }
+    }
+    // 👇 Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    // NOT RECOMMENDED: Use sudo instead.
+    // "remoteUser": "root"
+}
