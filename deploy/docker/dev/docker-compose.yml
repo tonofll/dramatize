@@ -7,14 +7,26 @@ services:
     restart: always
     environment:
       # TODO: move to .env
-      POSTGRES_PASSWORD: example
+      POSTGRES_PASSWORD: dramatize
+      POSTGRES_DB: dramatize
+    ports:
+      - 5432:5432
+    volumes:
+       - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 10s
+      retries: 15
 
   api:
     container_name: dramatize-api
     image: dramatize/api
     build: ../../../api
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
 
   client:
     container_name: dramatize-client

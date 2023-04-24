@@ -2,7 +2,7 @@ FROM python:3.10.11-slim
 
 WORKDIR /src
 
-RUN apt update && apt install -y build-essential pkg-config libssl-dev
+RUN apt update && apt install -y build-essential pkg-config libssl-dev libpq-dev
 
 # Install poetry
 RUN pip3 install poetry==1.3.2
