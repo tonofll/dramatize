@@ -15,7 +15,7 @@ class Base(DeclarativeBase):
 
 # Many-to-many relationship between characters and scenes
 # (e.g. a character can be in multiple scenes and a scene can have multiple characters)
-at_scene_character = Table(
+scenes_characters = Table(
     "scenes_characters",
     Base.metadata,
     Column("scene_id", Integer, ForeignKey("scenes.id", ondelete="CASCADE")),
@@ -25,11 +25,19 @@ at_scene_character = Table(
 # Many-to-many relationship between characters and cast members
 # (e.g. a character can be played by multiple cast members and a cast member can play
 #  multiple characters)
-at_cast_member_character = Table(
+characters_cast_members = Table(
     "characters_cast_members",
     Base.metadata,
     Column("cast_member_id", Integer, ForeignKey("cast_members.id", ondelete="CASCADE")),
     Column("character_id", Integer, ForeignKey("characters.id", ondelete="CASCADE")),
+)
+
+# Define the association table for the many-to-many relationship between cast members and rehearsals
+cast_members_rehearsals = Table(
+    "cast_members_rehearsals",
+    Base.metadata,
+    Column("cast_member_id", Integer, ForeignKey("cast_members.id")),
+    Column("rehearsal_id", Integer, ForeignKey("rehearsals.id")),
 )
 
 
@@ -67,11 +75,14 @@ class CastMember(Base):
     roles: Mapped[ARRAY] = mapped_column(ARRAY(ENUM(CastRole)), default=[])
     characters: Mapped[list["Character"]] = relationship(
         "Character",
-        secondary=at_cast_member_character,
+        secondary=characters_cast_members,
         back_populates="cast_members",
         passive_deletes=True,
     )
     user: Mapped[User] = relationship("User", back_populates="cast_members", passive_deletes=True)
+    rehearsals: Mapped[list["Rehearsal"]] = relationship(
+        "Rehearsal", secondary=cast_members_rehearsals, back_populates="cast_members"
+    )
 
     # __table_args__ = (PrimaryKeyConstraint("play_id", "user_id"),)
 
@@ -106,7 +117,7 @@ class Scene(Base):
     play_id: Mapped[int] = mapped_column(ForeignKey("plays.id"))
     characters: Mapped[list["Character"]] = relationship(
         "Character",
-        secondary=at_scene_character,
+        secondary=scenes_characters,
         back_populates="scenes",
         passive_deletes=True,
     )
@@ -126,52 +137,35 @@ class Character(Base):
 
     scenes: Mapped[list["Scene"]] = relationship(
         "Scene",
-        secondary=at_scene_character,
+        secondary=scenes_characters,
         back_populates="characters",
         passive_deletes=True,
     )
     cast_members: Mapped[list["CastMember"]] = relationship(
         "CastMember",
-        secondary=at_cast_member_character,
+        secondary=characters_cast_members,
         back_populates="characters",
         passive_deletes=True,
     )
 
 
-"""
-class Character(SQLModel, table=True):
-
-    __tablename__ = "characters"
-
-    id: int | None = Field(default=None, primary_key=True)  # noqa: A003
-    name: str
-    description: str
-    play_id: int
-    actors_ids: list[int] = []  # multiple actors can play the same character
-
-
-class Scene(SQLModel, table=True):
-
-    __tablename__ = "scenes"
-
-    id: int | None = Field(default=None, primary_key=True)  # noqa: A003
-    name: str
-    description: str
-    play_id: int
-    character_ids: list[int] = []  # multiple characters can be in the same scene
-
-
-class Rehearsal(SQLModel, table=True):
+class Rehearsal(Base):
+    """."""
 
     __tablename__ = "rehearsals"
 
-    id: int | None = Field(default=None, primary_key=True)  # noqa: A003
-    name: str
-    description: str
-    play_id: int
-    scene_ids: list[int] = []  # multiple scenes can be in the same rehearsal
-    time_start: int
-    time_end: int
-    location: str
-
-"""
+    id: Mapped[int] = mapped_column(  # noqa: A003
+        primary_key=True, unique=True, nullable=False, autoincrement=True
+    )
+    name: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(String(255))
+    play_id: Mapped[int] = mapped_column(ForeignKey("plays.id"))
+    # multiple scenes can be rehearsed at the same time
+    scene_ids: Mapped[list[int]] = mapped_column(ARRAY(Integer))
+    time_start: Mapped[int] = mapped_column(Integer)
+    time_end: Mapped[int] = mapped_column(Integer)
+    location: Mapped[str] = mapped_column(String(255))
+    cast_member_creator_id: Mapped[int] = mapped_column(ForeignKey("cast_members.id"))
+    cast_members: Mapped[list["CastMember"]] = relationship(
+        "CastMember", secondary=cast_members_rehearsals, back_populates="rehearsals"
+    )
