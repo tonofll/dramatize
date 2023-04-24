@@ -21,7 +21,8 @@ if __name__ == "__main__":
 
         director1 = CastMember(roles=["DIRECTOR"], user_id=user1.id, play_id=play1.id)
         actor1 = CastMember(user_id=user1.id, play_id=play2.id)
-        session.add_all([director1, actor1])
+        actor_fake = CastMember(user_id=user1.id, play_id=play2.id)
+        session.add_all([director1, actor1, actor_fake])
         session.flush()
 
         ch1 = Character(name="John", play_id=play1.id)

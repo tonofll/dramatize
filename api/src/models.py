@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Table
+from sqlalchemy import Column, ForeignKey, Integer, PrimaryKeyConstraint, String, Table
 from sqlalchemy.dialects.postgresql import ARRAY, ENUM, JSON
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -65,12 +65,8 @@ class CastMember(Base):
     __tablename__ = "cast_members"
 
     id: Mapped[int] = mapped_column(primary_key=True, unique=True, autoincrement=True)  # noqa: A003
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), primary_key=True, autoincrement=False
-    )
-    play_id: Mapped[int] = mapped_column(
-        ForeignKey("plays.id"), primary_key=True, autoincrement=False
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    play_id: Mapped[int] = mapped_column(ForeignKey("plays.id"))
     availability: Mapped[JSON] = mapped_column(JSON, default={})
     roles: Mapped[ARRAY] = mapped_column(ARRAY(ENUM(CastRole)), default=[])
     characters: Mapped[list["Character"]] = relationship(
@@ -84,7 +80,7 @@ class CastMember(Base):
         "Rehearsal", secondary=cast_members_rehearsals, back_populates="cast_members"
     )
 
-    # __table_args__ = (PrimaryKeyConstraint("play_id", "user_id"),)
+    __table_args__ = (PrimaryKeyConstraint("user_id", "play_id"),)
 
 
 class Play(Base):
